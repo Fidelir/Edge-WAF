@@ -1,0 +1,30 @@
+# Host network mode (default): nginx binds 80/443 directly on the host and reaches apps on 127.0.0.1:PORT.
+# Linux with Docker Engine. On Docker Desktop use bridge mode: docker compose -f docker-compose.bridge.yml up -d
+
+services:
+  waf:
+    image: ${WAF_IMAGE:-ghcr.io/fidelir/edge-waf:0.1.0}
+    build: .
+    container_name: waf
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      MODSECURITY_ENGINE: ${MODSECURITY_ENGINE:-DetectionOnly}
+      CRS_PARANOIA_LEVEL: ${CRS_PARANOIA_LEVEL:-1}
+      CRS_INBOUND_ANOMALY_THRESHOLD: ${CRS_INBOUND_ANOMALY_THRESHOLD:-5}
+      CRS_OUTBOUND_ANOMALY_THRESHOLD: ${CRS_OUTBOUND_ANOMALY_THRESHOLD:-4}
+      WAF_HEALTH_PORT: ${WAF_HEALTH_PORT:-8099}
+      WAF_RESOLVER: ${WAF_RESOLVER:-}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d:ro
+      - ./ssl.d:/etc/nginx/ssl.d:ro
+      - ./acme:/var/lib/nginx/acme
+      - ./logs:/var/log/nginx
+    ulimits:
+      nofile: 65536
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"

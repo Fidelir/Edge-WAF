@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: shellcheck
+        run: shellcheck docker/*.sh tests/*.sh scripts/*.sh
+
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12 -color
+
+      - name: compose files
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          docker compose -f docker-compose.bridge.yml config --quiet
+
+  build-test-scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: edge-waf:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: nginx -t
+        run: docker run --rm edge-waf:ci nginx -t
+
+      - name: Validate examples
+        run: tests/examples.sh edge-waf:ci
+
+      - name: Smoke tests
+        run: tests/smoke.sh edge-waf:ci
+
+      - name: Quick start (host network mode)
+        run: tests/quickstart.sh edge-waf:ci
+
+      - name: Automatic HTTPS (Pebble)
+        run: tests/acme.sh edge-waf:ci
+
+      - name: Trivy (CRITICAL/HIGH with available fixes)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: edge-waf:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
