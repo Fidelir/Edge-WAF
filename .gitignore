@@ -1,0 +1,9 @@
+.env
+conf.d/*
+!conf.d/default.conf
+ssl.d/*
+!ssl.d/.gitkeep
+acme/*
+!acme/.gitkeep
+logs/*
+!logs/.gitkeep
