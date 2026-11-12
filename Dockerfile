@@ -126,6 +126,7 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ca-certificates libpcre2-8-0 libssl3t64 zlib1g libxml2 libyajl2 libmaxminddb0; \
+    apt-get upgrade -y --no-install-recommends; \
     rm -rf /var/lib/apt/lists/*; \
     groupadd --system --gid 101 nginx; \
     useradd --system --uid 101 --gid nginx --no-create-home --home-dir /nonexistent \
