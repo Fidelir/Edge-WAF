@@ -136,7 +136,7 @@ Environment variables (set them in `.env` next to the compose file or in the she
 | `WAF_HEALTH_PORT` | `8099` | Port of the `/healthz` endpoint on `127.0.0.1`, used by the container HEALTHCHECK; in host mode it is opened on the host |
 | `ACME_EMAIL` | empty | Contact address registered with Let's Encrypt (optional) |
 | `WAF_RESOLVER` | from `/etc/resolv.conf` | DNS servers nginx uses for ACME and runtime name resolution, space-separated |
-| `WAF_IMAGE` | `ghcr.io/fidelir/edge-waf:0.1.0` | Image used by the compose files |
+| `WAF_IMAGE` | `ghcr.io/fidelir/edge-waf:0.1.1` | Image used by the compose files |
 | `WAF_HTTP_PORT`, `WAF_HTTPS_PORT` | `80`, `443` | Published ports, bridge mode only |
 
 Mounted from the project directory:

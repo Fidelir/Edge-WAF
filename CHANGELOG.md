@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-12
+
+### Fixed
+
+- Runtime image runs `apt-get upgrade` after installing Debian packages so security updates (for example `zlib1g`
+  on trixie-security) are applied; release and weekly Trivy scans stay green.
+
 ## [0.1.0] - 2026-11-05
 
 First public release.
@@ -47,5 +54,6 @@ First public release.
   against Pebble (the Let's Encrypt test CA) including a site added by reload, shellcheck, actionlint, Trivy (also
   weekly); release workflow building without cache and publishing to GHCR with SBOM and provenance.
 
-[Unreleased]: https://github.com/Fidelir/edge-waf/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Fidelir/edge-waf/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Fidelir/edge-waf/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Fidelir/edge-waf/releases/tag/v0.1.0

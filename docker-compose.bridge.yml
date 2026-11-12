@@ -5,7 +5,7 @@
 
 services:
   waf:
-    image: ${WAF_IMAGE:-ghcr.io/fidelir/edge-waf:0.1.0}
+    image: ${WAF_IMAGE:-ghcr.io/fidelir/edge-waf:0.1.1}
     build: .
     container_name: waf
     restart: unless-stopped
