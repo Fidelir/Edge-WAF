@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-19
+
+### Changed
+
+- nginx 1.30.6 → 1.30.7 (pinned SHA-256 updated).
+
 ## [0.1.1] - 2026-11-12
 
 ### Fixed
@@ -54,6 +60,7 @@ First public release.
   against Pebble (the Let's Encrypt test CA) including a site added by reload, shellcheck, actionlint, Trivy (also
   weekly); release workflow building without cache and publishing to GHCR with SBOM and provenance.
 
-[Unreleased]: https://github.com/Fidelir/edge-waf/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Fidelir/edge-waf/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Fidelir/edge-waf/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Fidelir/edge-waf/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Fidelir/edge-waf/releases/tag/v0.1.0
