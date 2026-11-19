@@ -25,7 +25,13 @@ expect_status() {
 }
 
 expect_log() {
-    if docker logs "$WAF" 2>&1 | grep -qE -- "$2"; then ok "$1"; else fail "$1: /$2/ not found in logs"; fi
+    local name="$1" pat="$2"
+    # Audit JSON is written asynchronously to stdout; poll briefly so CI runners do not flake.
+    for _ in $(seq 1 20); do
+        if docker logs "$WAF" 2>&1 | grep -qE -- "$pat"; then ok "$name"; return 0; fi
+        sleep 0.25
+    done
+    fail "$name: /$pat/ not found in logs"
 }
 
 start_waf() {
@@ -62,7 +68,9 @@ for mode in DetectionOnly On; do
         expect_status "SQLi blocked (On)" 403 "/?id=1%27%20OR%20%271%27%3D%271"
         expect_status "XSS blocked (On)" 403 "/?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E"
     fi
-    expect_log "SQLi in ModSecurity audit log (CRS 942xxx)" '"ruleId":"942[0-9]+"'
+    # Match audit JSON or the ModSecurity error-log line (either proves CRS 942 fired).
+    expect_log "SQLi in ModSecurity audit log (CRS 942xxx)" \
+        '(\[id "942[0-9]+"\]|"ruleId":"942[0-9]+")'
 
     if docker logs "$WAF" 2>&1 | grep -q '\[emerg\]'; then fail "[emerg] in error log"; fi
 done

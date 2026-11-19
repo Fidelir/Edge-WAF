@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - nginx 1.30.6 → 1.30.7 (pinned SHA-256 updated).
 
+### Fixed
+
+- Smoke and quick start tests poll for ModSecurity CRS 942 evidence in the audit or error log so CI
+  does not fail when the audit JSON line is slightly delayed on the runner.
+
 ## [0.1.1] - 2026-11-12
 
 ### Fixed

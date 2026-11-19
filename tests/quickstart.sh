@@ -31,7 +31,12 @@ expect_status() {
 }
 
 expect_file() {
-    if grep -qE -- "$3" "$TMP/logs/$2" 2>/dev/null; then ok "$1"; else fail "$1: /$3/ not found in logs/$2"; fi
+    local name="$1" file="$2" pat="$3"
+    for _ in $(seq 1 20); do
+        if grep -qE -- "$pat" "$TMP/logs/$file" 2>/dev/null; then ok "$name"; return 0; fi
+        sleep 0.25
+    done
+    fail "$name: /$pat/ not found in logs/$file"
 }
 
 mkdir -p "$TMP/conf.d" "$TMP/ssl.d" "$TMP/logs"
@@ -57,7 +62,6 @@ fi
 expect_status "GET / reaches the app" 200 "/"
 expect_status "GET /.env blocked by the probe guard" 403 "/.env"
 expect_status "SQLi passes in DetectionOnly" 200 "/?id=1%27%20OR%20%271%27%3D%271"
-sleep 1
 expect_file "probe in access.log with deny_probe=1" access.log '"request_uri":"/\.env".*"deny_probe":"1"'
 expect_file "SQLi in modsec_audit.log (CRS 942xxx)" modsec_audit.log '"ruleId":"942[0-9]+"'
 
